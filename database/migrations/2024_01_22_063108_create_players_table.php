@@ -18,7 +18,10 @@ return new class extends Migration
             $table->string('back_number');
             $table->integer('created_by');
             $table->integer('modified_by')->nullable();
-            $table->timestamps();
+            // $table->timestamps();
+            $table->date('created_date')->nullable();
+            $table->date('modified_date')->nullable();
+
         });
     }
 

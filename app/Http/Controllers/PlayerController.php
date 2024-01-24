@@ -5,16 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Player;
 use Illuminate\Http\Request;
 use Validator;
+use JWTAuth;
 
 class PlayerController extends Controller
 {
     protected $player;
-    protected $token;
+    // protected $token;
 
     public function __construct(Player $player, Request $request)
     {
         $this->player = $player;
-        $this->token = $request->query('token');
+        // $this->token = $request->query('token');
     }
 
     /**
@@ -52,19 +53,18 @@ class PlayerController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors'=>$validator->errors()
-            ->put('created_at', now())
-            ->toArray()],422);
+            return response()->json(['errors'=>$validator->errors()->toArray()],422);
         }
 
         /**
          * create data
          */
 
-        $dataLogin = Controller::dataLogin($this->token);
+        $user = JWTAuth::parseToken()->authenticate();
 
         $response = collect($request->only($this->player->getFillable()))
-            ->put('created_by', $dataLogin->id)
+            ->put('created_by', $user->id)
+            ->put('created_date', now())
             ->toArray();
 
         $data = $this->player->create($response);
@@ -108,7 +108,6 @@ class PlayerController extends Controller
 
         if ($validator->fails()) {
             return response()->json(['errors'=>$validator->errors()
-            ->put('updated_at', now())
             ->toArray()],422);
         }
 
@@ -116,10 +115,11 @@ class PlayerController extends Controller
          * get request data via $fillable
          */
         
-        $dataLogin = Controller::dataLogin($this->token);
+         $user = JWTAuth::parseToken()->authenticate();
 
         $response = collect($request->only($this->player->getFillable()))
-            ->put('modified_by', $dataLogin->id)
+            ->put('modified_by', $user->id)
+            ->put('modified_date', now())
             ->toArray();
 
         /**

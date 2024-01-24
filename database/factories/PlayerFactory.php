@@ -20,7 +20,8 @@ class PlayerFactory extends Factory
             'position' => fake()->randomElement(['back', 'front', 'middle']),
             'name' => fake()->name(),
             'back_number' => fake()->randomElement([10,11,12]),
-            'created_by' => fake()->randomElement([1,2,3])
+            'created_by' => fake()->randomElement([1,2,3]),
+            'created_date' => now()
         ];
     }
 }
